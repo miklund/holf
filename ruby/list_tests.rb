@@ -150,5 +150,47 @@ class Expand < Test::Unit::TestCase
     # assert
     assert_equal([10000.0, 7000.0, 4900.0], result.take(3))
   end
+
+  def test_should_finish_enumeration_with_nil
+    # arrange
+    data = 10000.0
+
+    # act
+    result = Holf::List.expand(data) {|prev| prev > 20000 ? nil : (prev * 1.3)}
+
+    # assert
+    assert_equal([10000.0, 13000.0, 16900.0, 21970.0], result.to_a)
+  end
 end
 
+class Collect < Test::Unit::TestCase
+
+  def test_should_merge_yields_into_one_list
+    # arrange
+    data = [[1, 2], [3, 4, 5], [6]]
+
+    # act
+    result = Holf::List.collect(data) {|i| i}
+
+    # assert
+    assert_equal([1, 2, 3, 4, 5, 6], result.to_a)
+  end
+end
+
+class Scan < Test::Unit::TestCase
+
+  def test_should_produce_a_series_of_computations
+    # arrange
+    departures = Holf::List.expand(0) {|i| i == 20 ? 10 : 20}
+    firstDeparture = 609 # minutes from 00:00
+
+    # act
+    timetable = Holf::List.scan(departures, firstDeparture) {|current, n| current + n}
+
+    # map
+    result = Holf::List.map(timetable.take(5)) {|time| "#{time / 60}:%02d" % (time % 60)}      
+
+    # assert
+    assert_equal(["10:09", "10:29", "10:39", "10:59", "11:09"], result.to_a)
+  end
+end

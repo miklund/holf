@@ -2,9 +2,10 @@
 class Enumerator
   # a nice printout of enumerated values up to 10
   def to_s
+    enum = self.clone # don't change position in self
     result = "["
     i = 0
-    self.each do |item|
+    enum.each do |item|
       if (i += 1) > 10 then
         result += "..."
         break
@@ -87,8 +88,29 @@ module Holf
       current = init
       Enumerator.new do |e|
         e.yield current
-        while true
-          e.yield current = yield(current)
+        while current = yield(current)
+          e.yield current 
+        end
+      end
+    end
+
+    # collect
+    def self.collect(list)
+      Enumerator.new do |e|
+        list.each do |sub|
+          yield(sub).each do |item|
+            e.yield yield(item)
+          end
+        end
+      end
+    end
+
+    # enumerate each step in a computation
+    def self.scan(list, state)
+      result = state
+      Enumerator.new do |e|
+        list.each do |item|
+          e.yield result = yield(result, item)
         end
       end
     end
