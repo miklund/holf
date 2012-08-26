@@ -34,5 +34,63 @@ module Holf
         end
       end
     end
+
+    # fold aggregates all values to an aggregated value
+    def self.fold(list, init)
+      result = init
+      list.each do |item|
+        result = yield(result, item)
+      end
+      return result
+    end
+
+    # partition splits a list into buckets
+    def self.partition(list)
+      result = []
+      list.each do |item|
+        index = yield(item)
+
+        raise "Yield produced non positive integer" unless index.kind_of? Integer and index > -1
+
+        if index > result.length - 1 then
+
+          # expand result
+          for i in result.length..index do
+            result << []
+          end
+        end
+
+        # push item to bucket
+        result[index] << item
+      end
+
+      return result
+    end
+
+    # reduce a list to one item
+    def self.reduce(list)
+      result = nil, first = true
+      
+      list.each do |current|
+        result = current and first = false if first
+        result = yield(result, current)
+      end
+
+      # avoid missleading result
+      raise "Cannot reduce an empty list" if first == true
+
+      return result
+    end
+
+    # expand a value
+    def self.expand(init)
+      current = init
+      Enumerator.new do |e|
+        e.yield current
+        while true
+          e.yield current = yield(current)
+        end
+      end
+    end
   end
 end
