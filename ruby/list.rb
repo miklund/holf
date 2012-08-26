@@ -2,15 +2,13 @@
 class Enumerator
   # a nice printout of enumerated values up to 10
   def to_s
-    enum = self.clone # don't change position in self
     result = "["
-    i = 0
-    enum.each do |item|
-      if (i += 1) > 10 then
+    self.take(11).each_with_index do |item, index|
+      if (index == 10)  then
         result += "..."
         break
       end
-      result += ", " if i > 1
+      result += ", " if index > 0
       result += "#{item.to_s}"
     end
     return result + "]"
@@ -116,3 +114,33 @@ module Holf
     end
   end
 end
+
+# extend array class with functions
+class Array
+  # WARNING: map is already a function on Array
+  def h_map(&block)
+    Holf::List::map(self, &block)
+  end
+
+  def fold(init, &block)
+    Holf::List.fold(self, init, &block)
+  end
+
+  def partition(&block)
+    Holf::List.partition(self, &block)
+  end
+
+  def reduce(&block)
+    Holf::List.reduce(self, &block)
+  end
+
+  # WARNING: collect is already a function on Array
+  def h_collect(&block)
+    Holf::List.collect(self, &block)
+  end
+
+  def scan(state, &block)
+    Holf::List.scan(self, state, &block)
+  end
+end
+
