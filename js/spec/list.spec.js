@@ -42,7 +42,7 @@ describe("Fold", function() {
   it("aggregates all integers to a sum", function() {
 
     // act
-    result = [1, 2, 3].fold(0, function(agg, item) { return agg + item; });
+    result = [1, 2, 3].fold(function(acc, item) { return acc + item; }, 0);
 
     // assert
     expect(result).toBe(6);
@@ -51,7 +51,7 @@ describe("Fold", function() {
   it("join all numbers into a string", function() {
 
     // act
-    result = [1, 2, 3].fold("", function(agg, item) { return agg + item.toString(); });
+    result = [1, 2, 3].fold(function(acc, item) { return acc + item.toString(); }, "");
 
     // assert
     expect(result).toBe("123");
@@ -61,9 +61,9 @@ describe("Fold", function() {
   it("join all numbers into one number", function() {
 
     // act
-    result = [1, 2, 3].fold(0, function(agg, item) {
-      return agg * 10 + item;
-    });
+    result = [1, 2, 3].fold(function(acc, item) {
+      return acc * 10 + item;
+    }, 0);
 
     // assert
     expect(result).toBe(123);
@@ -148,5 +148,90 @@ describe("Reduce", function () {
 
     // assert
     expect(result).toThrow("can't run reduce on an empty array");
+  });
+});
+
+
+describe("Collect", function () {
+  
+  it ("should merge arrays into one array", function () {
+
+    // arrange
+    var data = [[1, 2, 3], [4, 5], [6]];
+
+    // act
+    var result = data.collect(function (arr) { return arr; });
+
+    // assert
+    expect(result).toEqual([1, 2, 3, 4, 5, 6]);
+  });
+
+  it ("must be provided with a callback that produces an array", function () {
+
+    // arrange
+    var data = [[1, 2, 3], [4, 5], 6]; // last item not an array
+
+    // act
+    var result = function () {
+      return data.collect(function (arr) { return arr; });
+    }
+
+    // assert
+    expect(result).toThrow("callback must produce an array");
+  });
+});
+
+describe("Scan", function () {
+
+  it ("should calculate fibonacci", function () {
+
+    // arrange
+    var data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+    // act
+    var result = data.scan(function (acc, item) { 
+      return [acc[1], acc[0] + acc[1]]; 
+    }, [0, 1]).map (function (item) {
+      return item[0];
+    });
+
+    // assert
+    expect(result).toEqual([1, 1, 2, 3, 5, 8, 13, 21, 34, 55]);
+  });
+
+  it ("should produce an array of all computations", function () {
+
+    // arrange
+    var firstDeparture = 609;
+    var intervals = [0, 10, 20, 10, 20, 10, 20, 10, 20, 10];
+
+    // act
+    var departures = intervals.scan(function (previous, interval) {
+      return previous + interval;
+    }, firstDeparture);
+
+    var timetable = departures.map(function (time) {
+      var result = "";
+      var hour = Math.floor(time / 60); // truncate decimals
+      var minute = time % 60;
+
+      if (hour < 10) {
+        result += "0";
+      }
+
+      result += hour.toString() + ":";
+
+      if (minute < 10) {
+        result += "0";
+      }
+
+      result += minute.toString();
+      return result;
+    });
+
+    var result = timetable.join(", ");
+
+    // assert
+    expect(result).toBe("10:09, 10:19, 10:39, 10:49, 11:09, 11:19, 11:39, 11:49, 12:09, 12:19");
   });
 });
