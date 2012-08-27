@@ -13,29 +13,33 @@ var holf = holf || {};
 holf.list = {
 
     /**
-     * Map each element of list with callback
-     *
-     * @method map
-     * @param  {enumerable} list     List of elements to be transformed
-     * @param  {function}   callback Transform each element
-     * @return {enumerable} New list with each element transformed
-     */
+    * Map each element of list with callback
+    *
+    * @method map
+    * @param  {enumerable} list     List of elements to be transformed
+    * @param  {function}   callback Transform each element
+    * @return {enumerable} New list with each element transformed
+    */
     map: function (list, callback) {
-      "use strict"
-      var result = new Array(list.length),
-          i = 0;
+        "use strict";
+        var result = [],
+            i = 0,
+            max = 0;
 
-      for (i = 0; i < list.length; i += 1) {
-        result[i] = callback(list[i]);
-      }
+        for (i = 0, max = list.length; i < max; i += 1) {
+            result[i] = callback(list[i]);
+        }
 
-      return result;
+        return result;
     }
-  };
+};
 
 // extend the array object with holf functions
 (function () {
-  Array.prototype.map = function (callback) {
-    return holf.list.map(this, callback);
-  }
-})();
+    "use strict";
+    if (typeof Array.prototype.map !== "function") {
+        Array.prototype.map = function (callback) {
+            return holf.list.map(this, callback);
+        };
+    }
+}());
