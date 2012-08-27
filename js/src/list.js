@@ -92,6 +92,31 @@ holf.list = {
         }
 
         return result;
+    },
+
+    /**
+     * Reduce an array to a single item
+     *
+     * @method reduce
+     * @param  {function} callback Aggregator function, callback(agg, item)
+     * @param  {array}    arr      Array of items to be reduced
+     * @return {object}   The object the array has been reduced to
+     */
+    reduce: function (callback, arr) {
+        "use strict";
+        var result = arr[0],
+            i = 0,
+            sourceMax = 0;
+
+        if (arr[0] === undefined) {
+            throw "can't run reduce on an empty array";
+        }
+
+        for (i = 1, sourceMax = arr.length; i < sourceMax; i += 1) {
+            result = callback(result, arr[i]);
+        }
+
+        return result;
     }
 };
 

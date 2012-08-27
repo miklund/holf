@@ -104,3 +104,49 @@ describe("Partition", function() {
     expect(result).toThrow("callback should return a positive number");
   }); 
 });
+
+
+describe("Reduce", function () {
+
+  it("should figure out maximum number in list", function () {
+
+    // act
+    // reduce already exists on array, calling holf explicit
+    result = holf.list.reduce(function (a, b) {
+      if (a > b) {
+        return a;
+      }
+
+      return b;
+    }, [1, 9, 2, 8, 7, 6]);
+
+    // assert
+    expect(result).toEqual(9);
+  });
+  
+  it ("should join all numbers together", function () {
+    
+    // arrange
+    var data = [1, 2, 3, 4, 5];
+    
+    // act
+    result = holf.list.reduce(function (a, b) { return a * 10 + b; }, data);
+
+    // assert
+    expect(result).toBe(12345);
+  });
+
+  it ("must be provided with an non empty array", function () {
+
+    // assert
+    var data = [];
+
+    // act
+    result = function () {
+      return holf.list.reduce(function (a, b) { return a; }, data);
+    };
+
+    // assert
+    expect(result).toThrow("can't run reduce on an empty array");
+  });
+});
