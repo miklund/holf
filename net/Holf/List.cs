@@ -6,16 +6,6 @@
 
     public static class List
     {
-        public static void Scraboard()
-        {
-
-
-
-
-
-            //var result = input.Aggregate(0, (agg, item) => agg + item);
-        }
-
         /// <summary>
         /// Map each item in list to another list
         /// </summary>

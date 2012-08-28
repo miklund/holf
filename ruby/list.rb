@@ -43,6 +43,18 @@ module Holf
       return result
     end
 
+    def self.fold2(list1, list2, init)
+      result = init
+      list2_enumerator = list2.each
+      
+      list1.each do |item1|
+        item2 = list2_enumerator.next
+        result = yield(result, item1, item2)
+      end
+      
+      return result
+    end
+
     # partition splits a list into buckets
     def self.partition(list)
       result = []
@@ -126,7 +138,7 @@ class Array
     Holf::List.fold(self, init, &block)
   end
 
-  def partition(&block)
+  def h_partition(&block)
     Holf::List.partition(self, &block)
   end
 
