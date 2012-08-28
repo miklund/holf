@@ -83,8 +83,12 @@ module Holf
       result = nil, first = true
       
       list.each do |current|
-        result = current and first = false if first
-        result = yield(result, current)
+        if first
+          result = current
+          first = false
+        else
+          result = yield(result, current)
+        end
       end
 
       # avoid missleading result

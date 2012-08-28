@@ -9,6 +9,19 @@
 
     public class Reduce
     {
+        private void Example()
+        {
+            var input = new[] { 1, 2, 3, 4, 5 };
+            var result = input.First();
+            foreach (var item in input.Skip(1))
+            {
+                if (result < item)
+                {
+                    result = item;
+                }
+            }
+        }
+
         [Fact]
         public void ShouldSelectMaxItemInList()
         {
